@@ -1,0 +1,144 @@
+IPPlan API v0.95
+----------------
+
+The IPPlan API makes it possible to interact with the IPPlan database
+using any XML-RPC compliant language to make RPC calls. Very little
+programming is required and a large number of languages are supported - see
+http://www.xmlrpc.com/ for more info on the XML-RPC specification.
+
+The implementations used by IPPlan are:
+
+	o  PHP server implementation which can be found at 
+		http://phpxmlrpc.sourceforge.net/
+	o  PERL client implementation which can be found at
+		http://search.cpan.org/search?dist=Frontier-RPC
+
+Included with the API are a number of example programs written in PERL
+to demonstrate what is possible with the XML-RPC interface to IPPlan.
+
+There is also a simple whois server (ipplan-whoisd.php) written in php
+to demonstrate an example whois daemon which can query the IPplan database
+via XML-RPC
+
+Some applications of the interface could be to generate:
+
+	o  Sendmail access lists
+	o  DHCP config files
+	o  Static entries for routing tables
+	o  Query from trouble ticket systems to obtain network details
+
+And any other application that deals with IP addresses in some way or
+another.
+
+The way it works
+----------------
+
+A server component written in PHP understands a number of RPC calls which
+return data via the HTTP protocol. A client application written in
+virtually any language (I choose PERL or PHP) talks to this server and makes
+calls via a pre-defined API to get information from the IPPlan databases.
+The information returned is native to the language requiring no additional
+coding work, and can be handled as usual in the native language.
+
+Using PERL as an example, making a call is a simple as adding a couple of
+lines of code to your program:
+
+use Frontier::Client;
+
+# place where IPPlan server API server is installed - including userid
+# and password
+my $serverURL='http://userid:password@localhost/iptrackapi/server.php';
+
+# setup connection to server
+my $client = Frontier::Client->new( 'url' => $serverURL,
+		'debug' => 0, 'encoding' => 'iso-8859-1' );
+
+# and make the call! $resp will contain result
+my $resp = $client->call("ipplan.FetchSubnet", $parameters);
+
+
+IPPlan RPC calls
+----------------
+
+ipplan.SearchIP($params) 
+// RPC-call: takes one string parameter containing a valid IP address
+// Returns: all networks that contain the IP address for all customers
+// Return value: array of hashes - hash has following indexes:
+//			baseaddr - network containing IP address
+//			baseindex - the index of the subnet in the database - used in other queries
+//			subnetsize - int containing sizei/number of hosts in subnet
+//			descrip - description of network
+//			customer - customer number - used in other queries
+//			custdescrip - description of customer to which network
+//					belongs
+ 
+
+ipplan.FetchCustomer() 
+// RPC-call: takes no parameters
+// Returns: all customers valid for authenticated user, or all if no
+//		authentication
+// Return value: array of hashes - hash has following indexes:
+//			customer - index to customers data - used with 
+//				FetchBase API call
+//			custdescrip - description of customer
+
+ipplan.FetchCustomerInfo()
+// RPC-call: takes one integer parameter containing a customer index
+// Returns: all information for the requested customer
+// Return value: hash - hash has following indexes:
+//			org, street, city, state, zipcode, cntry, nichandl
+//			lname, fname, mname, torg, tstreet, tcity, tstate
+//			tzipcode, tcntry
+//			dns - this is an array of hashes with the dns servers
+//				hname - server name
+//				ipaddr - dns server ipaddr
+
+
+ipplan.FetchBase($params)
+// RPC-call: takes five parameters
+//		1 - integer representing customer index obtained with
+//			FetchCustomer API call
+//		2 - integer representing areaindex
+//		3 - integer representing rangeindex
+//		4 - string representing ip address or network to search
+//		5 - integer signifying searching for networks or ip addresses
+//			0 searches for networks, 1 searches for ip addresses
+//		6 - string representing filter for descriptions - this is a
+//			regular expression for databases that support it
+//			MySQL or Postgress
+// Returns: all networks that meet search criteria
+// Return value: array of hashes - hash has following indexes:
+//			baseaddr - network containing IP address
+//			subnetsize - size of network
+//			descrip - description of network
+//			lastmod - last modified date and time
+ 
+
+ipplan.FetchSubnet($params)
+// RPC-call: takes one parameter
+//		1 - integer representing network index obtained with
+//			FetchBase
+// Returns: all ip addresses in network that meet search criteria
+// Return value: array of hashes - hash has following indexes:
+//			userinf - user information
+//			location - user location
+//			telno - user telefone number
+//			descrip - description of device
+//			lastmod - last modified date and time
+
+Example
+-------
+
+See the examples directory.
+
+	o  fetchcustomer - obtains all the customers with their indexes
+	o  fetchbase - obtains network information for a customer based on
+		an index (the index obtained through fetchcustomer)
+	o  fetchsubnet - obtains subnet information for a customer based on
+		an index (the index obtained through fetchbase)
+	o  searchip - given an ip address, displays all customers and
+		networks ip address belongs to
+	o  ipplan-whoisd.php - a simple whois daemon written in php. See the
+		README-WHOISD in the exmples directory
+
+richarde@users.sourceforge.net

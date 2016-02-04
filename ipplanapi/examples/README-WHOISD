@@ -1,0 +1,20 @@
+The file ipplan-whoisd.php is a simple whois server written using the 
+IPplan API based on XML-RPC and php. The php sockets library needs to be
+compiled into php for the server to work.
+
+Setup of the server is simple. Edit the ipplan-whoisd.php file and set 
+'define' variables at the top of the file. Note that USER and PASSWD
+setting are valid users and passwords already created in IPplan.
+
+If you are having issues, turn on the DEBUG setting. This will output
+all returned data from the server. You will then be able to determine 
+if the software is correctly installed and the whois server can talk
+to the IPplan backend. Most issues will be related to directory paths
+or authentication.
+
+You can then point a whois client at the server to get information
+from the IPplan database:
+
+whois -h localhost '?'			- outputs help
+whois -h localhost 'AS Test'		- displays information about AS test
+whois -h localhost '10.0.0.1'		- queries netblock 10.0.0.1

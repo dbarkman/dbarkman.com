@@ -1,0 +1,16 @@
+XML-RPC:
+-------
+XML-RPC http://php.weblogs.com/xml-rpc
+	http://phpxmlclasses.sourceforge.net/
+	http://sourceforge.net/projects/phpxmlrpc/
+	http://sourceforge.net/projects/simplexmlrpc/
+	can create xml-rpc call to output DNS zone files
+Update individual IP details via perl script
+
+Calls for
+	areas
+	ranges
+Way to obtain ip addresses as type int - needed for looping using PERL
+	or rather convert inet_ntoa and inet_aton to PERL
+
+Richarde@users.sourceforge.net

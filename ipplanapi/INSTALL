@@ -1,0 +1,35 @@
+Quick install:
+-------------
+
+NOTE: if upgrading, read the UPGRADE file.
+
+I assume a working installation of IPplan v2.99 or higher
+
+In your web tree (normally /home/httpd/html), 
+
+1) create a directory called ipplanapi
+2) untar the api tar-ball into this directory
+3) change the directory ownership and permissions of the ipplanapi directory
+   chown -R root.nobody ipplan
+   chmod -R 750 ipplanapi
+
+   this is operating system dependent - the above line is for a Redhat 6.2
+   based system. Have a look at the rest of your web tree for the correct
+   settings for your system.
+
+   For Redhat 7.x systems use:
+
+   chown -R root.apache ipplanapi
+   chmod -R 750 ipplanapi
+
+   It is important to set the correct permissions to prevent people from
+   seeing your passwords.
+
+4) modify the paths in the server.php script to the ipplan directory if 
+   they are not the default
+5) modify the userid and password info in any of the scripts in the
+   "examples" directory which you want to use. You need to modify the
+   "serverURL" string.
+
+Hope it works!
+richarde@users.sourceforge.net
